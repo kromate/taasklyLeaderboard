@@ -1,5 +1,5 @@
 import VueGtag, { trackRouter } from 'vue-gtag-next'
-import { initializeAnalytics, GA_ID } from '@/composables/core/analytics'
+import {  GA_ID } from '@/composables/core/analytics'
 
 
 export default defineNuxtPlugin((nuxtApp) => {
