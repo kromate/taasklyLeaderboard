@@ -4,6 +4,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator, Firestore } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
+import { is_dev } from '@/composables/utils/system'
 
 
 const firebaseConfig = {
@@ -33,7 +34,7 @@ export const useFirestore = (databaseName: string): Firestore => {
 
 export const auth = getAuth(useFirebase())
 export const defaultDb: Firestore = useFirestore('(default)')
-export const db: Firestore = useFirestore('leaderboard')
+export const db: Firestore = is_dev ? useFirestore('(default)') : useFirestore('leaderboards')
 export const storage = getStorage(useFirebase())
 export const functions = getFunctions(useFirebase(), 'us-central1')
 
@@ -46,4 +47,6 @@ if (import.meta.env.DEV) {
   connectFunctionsEmulator(functions, 'localhost', 5001)
   connectStorageEmulator(storage, 'localhost', 9199)
 }
+
+
 

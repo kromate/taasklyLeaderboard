@@ -1,70 +1,97 @@
 <template>
-	<main v-if="!loading" class=" md:h-[calc(100vh-170px)] h-full  px-5 container flex justify-center w-full">
-		<div class="w-full flex flex-col md:flex-row gap-24 md:py-12 py-6 justify-center">
-			<div class="flex flex-col gap-9 w-full max-w-md">
-				<h1 class="flex flex-col md:flex-row items-start gap-4 w-full max-w-full">
-					<Undo2 class="border border-dark p-1 rounded-md cursor-pointer !min-w-[32px] !max-h-[32px] hover:btn_shadow transite " :size="32" @click="useRouter().back()" />
-					<div class="flex flex-col">
-						<span class="text-3xl font-bold">{{ board.title }}</span>
-						<span class="text-base ">{{ board.desc }}</span>
-						<div class="field mt-4 items-start gap-4">
-							<label for="link" class="text-lg">Public link</label>
-							<div class="input-field w-full py-4 flex items-center justify-between gap-5">
-								<div class="select-all  text-base w-full" @click="copyBoardLink(board.id)">
-									{{ truncateString(`${host}/b/${board.id}`, 20) }}
-								</div>
+	<section class='w-full'>
+		<main v-if="!loading" class=" md:h-[calc(100vh-170px)] h-full  px-5  md:!max-w-[2800px] flex justify-center w-full">
+			<div class="w-full flex flex-col md:flex-row gap-24 md:py-12 py-6 justify-center">
+				<div class="flex flex-col gap-9 w-full max-w-md">
+					<h1 class="flex flex-col md:flex-row items-start gap-4 w-full max-w-full">
+						<Undo2 class="border border-dark p-1 rounded-md cursor-pointer !min-w-[32px] !max-h-[32px] hover:btn_shadow transite " :size="32" @click="useRouter().back()" />
+						<div class="flex flex-col w-full">
+							<span class="text-3xl font-bold">{{ board.title }}</span>
+							<span class="text-base ">{{ board.desc }}</span>
+							<div class="field mt-4 items-start gap-4">
+								<ProfilePhoto v-if="board" :photo-url="board.photo_url" :folder-name="`leaderboard//${board.custom_link}`" @update="updatePhoto($event, board.id)" />
+								<label for="link" class="text-lg">Public link</label>
+								<div class="input-field w-full py-4 flex items-center justify-between gap-5">
+									<div class="select-all  text-base w-full" @click="copyBoardLink(board.custom_link)">
+										{{ truncateString(`${host}/b/${board.custom_link}`, 20) }}
+									</div>
 
-								<div class="gap-2 flex">
-									<Copy class="cursor-pointer border border-dark p-1 rounded" :size="28" @click="copyBoardLink(board.id)" />
-									<a :href="`http://${host}/b/${board.id}`" target="_blank"><MoveUpRight class="cursor-pointer border border-dark p-1 rounded" :size="28" /></a>
+									<div class="gap-2 flex">
+										<Copy class="cursor-pointer border border-dark p-1 rounded" :size="28" @click="copyBoardLink(board.custom_link)" />
+										<a :href="`http://${host}/b/${board.custom_link}`" target="_blank">
+											<MoveUpRight class="cursor-pointer border border-dark p-1 rounded" :size="28" />
+										</a>
+									</div>
 								</div>
+								<button class="btn btn-primary w-full gap-2 mt-12" @click="setDeleteBoardId(board.id)">
+									Delete
+								</button>
 							</div>
-							<button class="btn btn-primary w-full gap-2" @click="setDeleteBoardId(board.id)">
-								Delete
-							</button>
 						</div>
-					</div>
-				</h1>
-			</div>
-			<div v-if="!feedbackLoading" class="max-w-2xl flex flex-col gap-4 w-full">
-				<span class="text-3xl font-bold">{{ feedbacks.length }}  Posts</span>
-				<div v-if="feedbacks.length" class="flex flex-col gap-4 w-full">
-					<DashboardAdminUpvoteCard v-for="sample in feedbacks" :key="sample.id" :data="sample" />
-				</div>
-				<div v-else class="flex flex-col text-center py-12">
-					<PenLine :size="64" class="mx-auto" />
-					<h1 class="text-xl font-semibold">
-						No feedback yet
 					</h1>
-					<p class="text-base italic">
-						Share your board link to collect feedback from your users.
-					</p>
 				</div>
+				<div v-if="!membersLoading" class="max-w-2xl flex flex-col gap-4 w-full">
+					<div class="flex w-full justify-between">
+						<span class="text-3xl font-bold">{{ members.length }} Members</span>
+						<button class="btn btn-primary  gap-2  px-4 py-2 text-sm" @click="copyBoardInviteLink(board.custom_link)">
+							Copy invite link
+						</button>
+					</div>
+
+					<div v-if="members.length" class="flex flex-col gap-4 w-full">
+						<DashboardAdminLeaderboardCard v-for="(player, index) in members" :key="player.id" :data="player" :index="index" />
+					</div>
+					<div v-else class="flex flex-col items-center text-center py-12">
+						<PenLine :size="64" class="mx-auto" />
+						<h1 class="text-xl font-semibold">
+							No leaderboard members yet
+						</h1>
+						<p class="text-base italic">
+							Share your leaderboard invite link to your contestants to start collecting their scores.
+						</p>
+						<button class="btn btn-primary w-full gap-2 mt-12 max-w-[200px]" @click="copyBoardInviteLink(board.custom_link)">
+							Copy invite link
+						</button>
+					</div>
+				</div>
+				<Skeleton v-else height="500px" radius="8px" />
 			</div>
-			<Skeleton v-else height="500px" radius="8px" />
-		</div>
-	</main>
-	<Skeleton v-else height="500px" />
+		</main>
+		<Skeleton v-else height="500px" />
+	</section>
+
 </template>
 
 <script setup lang="ts">
 import { Copy, Undo2, MoveUpRight, PenLine } from 'lucide-vue-next'
 import { truncateString } from '@/composables/utils/formatter'
-import { useFetchUserBoardById } from '@/composables/board/id'
+import { useFetchUserDoashboardBoardById } from '@/composables/board/id'
 import { useCopyToClipboard } from '@/composables/utils/share'
-import { useFetchBoardFeedbacks } from '@/composables/board/feedbacks/fetch'
 import { useDeleteBoard } from '@/composables/board/delete'
+import { useFetchBoardMembers } from '@/composables/board/members/fetch'
 
 
+
+const { board, fetchUserBoardById, loading, updatePhoto } = useFetchUserDoashboardBoardById()
+const { members, fetchBoardMembers, loading: membersLoading } = useFetchBoardMembers()
 const { setDeleteBoardId } = useDeleteBoard()
 
-const { feedbacks, fetchBoardFeedbacks, loading: feedbackLoading } = useFetchBoardFeedbacks()
-const { board, fetchUserBoardById, loading } = useFetchUserBoardById()
+
+
+
+
 
 const id = useRoute().params.id as string
 
-fetchBoardFeedbacks(id)
+
 fetchUserBoardById(id)
+fetchBoardMembers(id)
+
+// onMounted(async () => {
+	
+// 	await fetchUserBoardById(id)
+// 	await fetchBoardMembers(id)
+// })
 
 const host = computed(() => {
 	return location.host
@@ -75,15 +102,11 @@ const { copyData } = useCopyToClipboard()
 const copyBoardLink = (id: string) => {
 	copyData({ info: `${host.value}/b/${id}`, msg: 'Link copied to clipboard' })
 }
+const copyBoardInviteLink = (id: string) => {
+	copyData({ info: `${host.value}/invite/${id}`, msg: 'Link copied to clipboard' })
+}
 
 
-
-
-const demo_feedback = [
-	{ id: 'a1b2c3d4e', title: 'Google Calendar integration', desc: 'I would be willing to pay extra for a calendar integration', upvotes: 123 },
-	{ id: 'f5g6h7i8j', title: 'Mobile App Enhancements', desc: 'The mobile app needs to be more responsive and user-friendly.', upvotes: 85 },
-	{ id: 'k9l0m1n2o', title: 'Additional Language Support', desc: 'Please add support for more languages, especially Spanish and French.', upvotes: 78 }
-]
 
 
 
@@ -94,6 +117,4 @@ definePageMeta({
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

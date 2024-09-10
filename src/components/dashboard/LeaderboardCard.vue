@@ -1,10 +1,11 @@
 <template>
-	<div class="flex items-center justify-between p-3 rounded-md cursor-pointer hover:btn_shadow transition-colors border border-dark bg-light" :class="positionClass">
-		<div class="flex items-center gap-4">
-			<span class="font-bold text-lg w-8 text-center">{{ position }}</span>
+	<div class="flex items-center justify-between p-3 pl-7 rounded-md cursor-pointer hover:btn_shadow transition-colors border border-dark bg-light relative" :class="positionClass">
+		<div class="flex items-center gap-4 ">
+			<span class="font-bold text-lg  text-center border border-dark rounded-md p-2 absolute h-7 w-7 center -left-3 bg-light" :class="positionClass">{{ position }}</span>
+			<Avatar :name="name" />
 			<span class="font-semibold">{{ name }}</span>
 		</div>
-		<span class="font-bold">{{ points }}</span>
+		<span class="font-bold text-2xl">{{ points }}</span>
 	</div>
 </template>
 

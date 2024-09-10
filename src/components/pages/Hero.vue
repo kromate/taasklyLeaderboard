@@ -17,8 +17,13 @@
 
 		<section class="flex center items-start h-full">
 			<div class="flex flex-col max-w-lg w-full gap-4 max-h-[410px] overflow-auto hide-scrollbar px-4 md:p-5 ">
-				<h2 class="text-2xl font-semibold bg-light p-2 px-4  rounded-md border border-dark">Sweetest Kids Leaderboard</h2>
-				<DashboardLeaderboardCard v-for="(player, index) in leaderboardData" :key="player.id" :name="player.name" :points="player.points" :index="index" />
+				<h2 class="text-2xl font-semibold bg-light p-2 px-4  rounded-md border border-dark">
+					Sweetest Kids Leaderboard
+				</h2>
+				<section class='flex flex-col gap-4'>
+					<DashboardLeaderboardCard v-for="(player, index) in leaderboardData" :key="player.id" :name="player.name" :points="player.points" :index="index" />
+				</section>
+
 			</div>
 		</section>
 	</main>
@@ -28,7 +33,6 @@
 
 const leaderboardData = [
 
-	// Affrican names
 	{ id: 1, name: 'Anthony', points: 100 },
 	{ id: 2, name: 'Afomachukwu', points: 90 },
 	{ id: 3, name: 'Zainab', points: 80 },
@@ -39,6 +43,6 @@ const leaderboardData = [
 	{ id: 8, name: 'Hank', points: 30 },
 	{ id: 9, name: 'Ivy', points: 20 },
 	{ id: 10, name: 'Jack', points: 10 }
-	// ... more players
+
 ]
 </script>

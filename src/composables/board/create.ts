@@ -8,6 +8,7 @@ import { convertObjWithRefToObj } from '@/composables/utils/formatter'
 const createBoardForm = {
     title: ref(''),
     desc: ref(''),
+    custom_link: ref(''),
     created_at: ref(new Date().toISOString()),
     updated_at: ref(new Date().toISOString())
 }
@@ -16,6 +17,7 @@ const createBoardForm = {
 const resetForm = () => {
     createBoardForm.title.value = ''
     createBoardForm.desc.value = ''
+    createBoardForm.custom_link.value = ''
 }
 
 
