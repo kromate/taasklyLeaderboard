@@ -11,8 +11,8 @@
 		</div>
 		<div class="flex gap-1 md:gap-2 items-center">
 		<span class="font-bold text-3xl">{{ data.points ?? 0 }}</span>
-		<button class="icon" @click="increasePoint(data.board_id, data.id)"><CircleArrowUp/></button>
-		<button class="icon" @click="decreasePoint(data.board_id, data.id)"><CircleArrowDown/></button>
+		<button class="icon center" @click="increasePoint(data.board_id, data.id)"><CircleArrowUp/></button>
+		<button class="icon center" @click="decreasePoint(data.board_id, data.id)"><CircleArrowDown/></button>
 		<button class="btn px-3.5 py-1 text-sm " @click='setDeleteBoardMemberId(data)'>Delete</button>
 		</div>
 		
@@ -52,6 +52,6 @@ const positionClass = computed(() => {
 
 <style scoped>
 .icon{
-	@apply w-6 h-6 md:w-8 md:h-8 center
+	@apply w-6 h-6 md:w-8 md:h-8 
 }
 </style>
