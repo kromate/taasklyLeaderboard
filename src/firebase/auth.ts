@@ -22,12 +22,7 @@ export const watchUserStateChange = () => {
 	}
 }
 
-// export const getCurrentUser = async () => {
-// 	const user = auth.currentUser
-// 	const { clearUser, setUser } = useUser()
-// 			if (user) await setUser(user)
-// 			else await clearUser()
-// }
+
 
 
 export const authRef = auth
