@@ -37,7 +37,6 @@ export const googleAuth = async () => {
 	try {
 			const result = await signInWithPopup(auth, provider)
 		const token = await result.user.getIdToken()
-		await serverAuth(token)
 		return result.user as User
 	} catch (err: any) {
 		useAlert().openAlert({ type: 'ERROR', msg: `Error: ${err}` })
@@ -54,13 +53,3 @@ export const signOutUser = async () => {
 	}
 }
 
-const serverAuth = async (token: string) => {
-	try {
-		await $fetch('/api/login', {
-        method: 'POST',
-        body: JSON.stringify({ token })
-	})
-	} catch (err: any) {
-		throw new Error(err.response._data.message)
-    }
-  }
