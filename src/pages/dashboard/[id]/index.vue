@@ -36,7 +36,6 @@
 										</button>
 
 									</label>
-									{{ is_editing }}
 									<TiptapEditor
 										:content="board.instructions || ''"
 										:on-update="updateInstructions"
