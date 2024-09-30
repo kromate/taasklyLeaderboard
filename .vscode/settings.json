@@ -1,5 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
     "cursor.general.enableShadowWorkspace": true,
-    "workbench.editor.showTabs": "multiple"
+    "workbench.editor.showTabs": "multiple",
+    "editor.hover.enabled": true
 }

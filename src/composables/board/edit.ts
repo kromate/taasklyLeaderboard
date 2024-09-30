@@ -7,11 +7,24 @@ import { useAlert } from '@/composables/core/notification'
 const loading = ref(false)
 
 const is_editing = ref(false)
+const instructions = ref()
 
 export const useEditBoard = () => {
     const { createBoardForm } = useCreateBoard()
     const isCustomLinkAvailable = ref(true)
 
+    const updateInstruction = async (id: string, content: string) => {
+        try {
+            loading.value = true
+            is_editing.value = false
+            await updateFirestoreDocument('boards', id, { instructions: content })
+            useAlert().openAlert({ type: 'SUCCESS', msg: 'Instructions updated successfully', addrs: 'updateInstruction' })
+        } catch (e: any) {
+            useAlert().openAlert({ type: 'ERROR', msg: `Error updating instructions: ${e.message}`, addrs: 'updateInstruction' })
+        } finally {
+            loading.value = false
+        }
+    }
     const updateCustomLink = (id: string) => {
         if (createBoardForm.custom_link.value === '') {
             is_editing.value = false
@@ -46,7 +59,7 @@ export const useEditBoard = () => {
 
 	watchDebounced(createBoardForm.custom_link, checkCustomLink, { debounce: 500 })
 
-    return { updateCustomLink, loading, is_editing, isCustomLinkAvailable }
+    return { updateCustomLink, loading, is_editing, isCustomLinkAvailable, updateInstruction, instructions }
 }
 
 

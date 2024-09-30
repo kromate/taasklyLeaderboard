@@ -1,5 +1,5 @@
 <template>
-	<section class='w-full'>
+	<section class="w-full">
 		<main v-if="!loading" class=" md:h-[calc(100vh-170px)] h-full  px-5  md:!max-w-[2800px] flex justify-center w-full">
 			<div class="w-full flex flex-col md:flex-row gap-24 md:py-12 py-6 justify-center">
 				<div class="flex flex-col gap-9 w-full max-w-md">
@@ -22,6 +22,26 @@
 											<MoveUpRight class="cursor-pointer border border-dark p-1 rounded" :size="28" />
 										</a>
 									</div>
+								</div>
+								<div class="w-full mt-8">
+									<label for="instructions" class="text-lg mb-2" />
+									<label for="email" class="w-full flex items-center justify-between">
+										Leaderboard Instructions
+										<button
+											:disabled="disabled"
+											class="text-sm btn py-1 px-3"
+											@click="handleUpdateInstructions"
+										>
+											{{ is_editing ? 'Update' : 'Edit' }}
+										</button>
+
+									</label>
+									{{ is_editing }}
+									<TiptapEditor
+										:content="board.instructions || ''"
+										:on-update="updateInstructions"
+										:editable="is_editing"
+									/>
 								</div>
 								<button class="btn btn-primary w-full gap-2 mt-12" @click="setDeleteBoardId(board.id)">
 									Delete
@@ -59,7 +79,6 @@
 		</main>
 		<Skeleton v-else height="500px" />
 	</section>
-
 </template>
 
 <script setup lang="ts">
@@ -69,8 +88,10 @@ import { useFetchUserDoashboardBoardById } from '@/composables/board/id'
 import { useCopyToClipboard } from '@/composables/utils/share'
 import { useDeleteBoard } from '@/composables/board/delete'
 import { useFetchBoardMembers } from '@/composables/board/members/fetch'
+import { useEditBoard } from '@/composables/board/edit'
 
 
+const { loading: editLoading, instructions, is_editing, isCustomLinkAvailable, updateInstruction } = useEditBoard()
 
 const { board, fetchUserBoardById, loading, updatePhoto } = useFetchUserDoashboardBoardById()
 const { members, fetchBoardMembers, loading: membersLoading } = useFetchBoardMembers()
@@ -79,7 +100,25 @@ const { setDeleteBoardId } = useDeleteBoard()
 
 
 
+const updateInstructions = (content: string) => {
+  instructions.value = content
+}
 
+const disabled = computed(() => {
+	if (!is_editing.value) return false
+	return instructions.value === board.value.instructions || editLoading.value
+})
+
+const handleUpdateInstructions = async () => {
+	if (is_editing.value) {
+		if (board.value && board.value.id) {
+			await updateInstruction(board.value.id, instructions.value)
+			is_editing.value = false
+		}
+	} else {
+		is_editing.value = true
+	}
+}
 
 const id = useRoute().params.id as string
 
@@ -88,7 +127,7 @@ fetchUserBoardById(id)
 fetchBoardMembers(id)
 
 // onMounted(async () => {
-	
+
 // 	await fetchUserBoardById(id)
 // 	await fetchBoardMembers(id)
 // })
