@@ -6,7 +6,7 @@ import { useConfirmationModal } from '@/composables/core/confirmation'
 
 const selected_member = ref()
 
-export const useDeleteBoardMember  = () => {
+export const useDeleteBoardMember = () => {
 	const loading = ref(false)
 
 
@@ -17,7 +17,6 @@ export const useDeleteBoardMember  = () => {
 	}
 
     const deleteBoardMember = async () => {
-        console.log(selected_member.value);
 		loading.value = true
 		try {
 			await deleteFirestoreSubCollectionDocument('boards', selected_member.value.board_id, 'members', selected_member.value.id)

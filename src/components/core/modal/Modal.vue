@@ -13,13 +13,13 @@
 			@click.self="autoClose ? close($el) : null"
 		>
 			<transition name="modal" appear @after-leave="closeModal">
-				<div v-if="modalType == 'popup'" :class="[isFullHeight? `isFullHeight ${computedWidth}`:'isNotFullHeight','modal']">
+				<div v-if="type == 'popup'" :class="[isFullHeight? `isFullHeight ${computedWidth}`:'isNotFullHeight','modal']">
 					<header class="modal-title flex justify-between w-full items-center">
 						<span :class="[noClose?'text-center w-full':'text-start', 'text-xl md:text-2xl']">{{ title }}</span>
-						<X
+						<XCircle
 							v-if="!noClose"
 							name="close"
-							class="text-dark w-7 cursor-pointer  border-[1.5px] border-dark rounded-md"
+							class="text-dark w-7 cursor-pointer  rounded-md"
 							@click="closeBtnPressed()"
 						/>
 					</header>
@@ -29,12 +29,12 @@
 				</div>
 			</transition>
 			<transition name="slide" appear @after-leave="closeModal">
-				<div v-if="modalType == 'sidebar'" class="sidebar">
+				<div v-if="type == 'sidebar'" class="sidebar">
 					<slot />
 				</div>
 			</transition>
 			<transition name="glide_up" appear @after-leave="closeModal">
-				<div v-if="modalType == 'bottom_bar'" class="bottombar">
+				<div v-if="type == 'bottom_bar'" class="bottombar">
 					<slot />
 				</div>
 			</transition>
@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 
 import { PropType } from 'vue'
-import { X } from 'lucide-vue-next'
+import { XCircle } from 'lucide-vue-next'
 import { modal } from '@/composables/core/modals'
 import { modalType, closeModalType, closeAllExtremes } from '@/composables/core/modal'
 
@@ -120,7 +120,7 @@ const close = (e) => {
 		typeof e.className === 'string' &&
 		e.className.includes('modal-background')
 	) {
-		closeModalType()
+		closeModal()
 		emit('close')
 	}
 }
@@ -130,13 +130,11 @@ const closeModal = () => {
 	modal.close(props?.propsModal || 'default')
 }
 const closeBtnPressed = () => {
-	if (modal.stack.value.length > 1) {
 		closeModal()
-	} else {
 		closeModalType()
 		emit('close')
 	}
-}
+
 </script>
 
 <style  lang="scss">

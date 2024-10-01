@@ -6,15 +6,16 @@ import Logout from '@/components/modals/auth/logout.vue'
 // ==================== CORE ===============================
 
 import Confirmation from '@/components/modals/core/Confirmation.vue'
+import Instructions from '@/components/modals/core/Instructions.vue'
 
 
 
 type AuthTypes = 'Logout'
-type CoreTypes = 'Confirmation'
+type CoreTypes = 'Confirmation' | 'Instructions'
 
 
 const AuthModals = { Logout } as Record<AuthTypes, any>
-const CoreModals = { Confirmation } as Record<CoreTypes, any>
+const CoreModals = { Confirmation, Instructions } as Record<CoreTypes, any>
 
 
 export const modal = useModal()

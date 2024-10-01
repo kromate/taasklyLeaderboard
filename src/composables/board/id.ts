@@ -4,20 +4,18 @@ import { getFirestoreCollectionWithWhereQuery } from '@/firebase/firestore/query
 import { useAlert } from '@/composables/core/notification'
 import { updateFirestoreDocument } from '@/firebase/firestore/edit'
 
-
-
-
-export const useFetchBoardById = () => {
 	const board = ref({} as any)
 	const boardArr = ref([])
 	const loading = ref(false)
 
+
+export const useFetchBoardById = () => {
 	const fetchUserBoardById = async (id: string) => {
 		loading.value = true
 		try {
 			await getFirestoreCollectionWithWhereQuery('boards', boardArr, { name: 'custom_link', operator: '==', value: id })
 				if (boardArr.value.length > 0) {
-				board.value = boardArr.value[0]
+					board.value = boardArr.value[0]
 			} else {
 				throw createError({ statusCode: 404, statusMessage: 'Board Not Found' })
 			}
@@ -31,9 +29,6 @@ export const useFetchBoardById = () => {
 }
 
 export const useFetchUserDoashboardBoardById = () => {
-	const board = ref({} as any)
-	const loading = ref(false)
-
 		const fetchUserBoardById = async (id:string) => {
 		if (board.value.length > 0) return
         loading.value = true
@@ -45,7 +40,7 @@ export const useFetchUserDoashboardBoardById = () => {
 			useAlert().openAlert({ type: 'ERROR', msg: `Error: ${e.message}`, addrs: 'fetchUserBoardById' })
 		}
 		}
-	
+
 	const updatePhoto = async (url: string, boardId: string) => {
         try {
             loading.value = true

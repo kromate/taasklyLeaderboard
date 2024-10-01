@@ -1,23 +1,26 @@
+import { v4 as uuidv4 } from 'uuid'
 import { getFirestoreCollectionWithWhereQuery } from '@/firebase/firestore/query'
 import { setFirestoreSubDocument } from '@/firebase/firestore/create'
 import { convertObjWithRefToObj } from '@/composables/utils/formatter'
-import { v4 as uuidv4 } from 'uuid'
 import { useAlert } from '@/composables/core/notification'
 import { callFirebaseFunction } from '@/firebase/functions'
+import { useCoreModal } from '@/composables/core/modals'
+import { useFetchBoardById } from '@/composables/board/id'
+
+
 
 
 const createBoardMemberForm = {
     name: ref(''),
     phone: ref(''),
-    created_at: ref(new Date().toISOString()),
+    created_at: ref(new Date().toISOString())
 }
 
-export const useCreateBoardMember = () => { 
-
+export const useCreateBoardMember = () => {
     const loading = ref(false)
     const phoneNumError = ref()
 
-    	watch(createBoardMemberForm.phone, (val) => {
+    watch(createBoardMemberForm.phone, (val) => {
 		if (val && val.length < 10) {
 			phoneNumError.value = 'Invalid Phone Number'
 		} else {
@@ -26,7 +29,7 @@ export const useCreateBoardMember = () => {
 	})
 
 
-    const create = async (boardCustomLink:string) => { 
+    const create = async (boardCustomLink:string) => {
         loading.value = true
         const boardId = await getBoardIdByCustomLink(boardCustomLink)
 
@@ -39,24 +42,25 @@ export const useCreateBoardMember = () => {
 
         const res = await callFirebaseFunction('createBoardMember', sent_data) as any
 
-        if (res.code === 200) { 
+        if (res.code === 200) {
             useRouter().push(`/b/${boardCustomLink}`)
-            useAlert().openAlert({type: 'SUCCESS', msg: 'You have joined the leaderboard'})
-        }else{
-            useAlert().openAlert({type: 'ERROR', msg: res.msg})
+            useAlert().openAlert({ type: 'SUCCESS', msg: 'You have joined the leaderboard' })
+            useCoreModal().openInstructions()
+        } else {
+            useAlert().openAlert({ type: 'ERROR', msg: res.msg })
         }
-    
+
 
         loading.value = false
-
     }
 
-    return { create, loading, createBoardMemberForm, phoneNumError  }
+    return { create, loading, createBoardMemberForm, phoneNumError }
 }
 
 
-const getBoardIdByCustomLink = async (customLink: string) => { 
-    const boards = ref([] as any[])      
+const getBoardIdByCustomLink = async (customLink: string) => {
+    const boards = ref([] as any[])
     await getFirestoreCollectionWithWhereQuery('boards', boards, { name: 'custom_link', operator: '==', value: customLink })
+    useFetchBoardById().board.value = boards.value[0]
     return boards.value[0].id
 }
